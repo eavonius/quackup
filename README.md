@@ -36,7 +36,7 @@ pip install quackup
 │         ├─ up.sql
 │         └─ down.sql
 |- quackup.ini
-└─ env.ini (optional)
+└─ .env (optional)
 ```
 
 ---
