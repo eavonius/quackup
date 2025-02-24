@@ -1,0 +1,75 @@
+{
+    "folders": [
+        {
+            "name": "quackup",
+            "path": "."
+        },
+    ],
+    "settings": {
+        "files.autoSave": "off",
+        "editor.rulers": [
+            80
+        ],
+        "editor.renderWhitespace": "all",
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "outline.showConstants": false,
+        "outline.showVariables": false,
+        "outline.showObjects": false,
+        "outline.showProperties": false,
+        "workbench.editor.highlightModifiedTabs": true,
+        "workbench.editor.labelFormat": "medium",
+        "[github-actions-workflow]": {
+            "editor.tabSize": 2,
+            "editor.insertSpaces": true,
+            "editor.detectIndentation": false,
+            "editor.formatOnSave": true,
+            "editor.guides.indentation": true
+        },
+        "[python]": {
+            "editor.tabSize": 4,
+            "editor.rulers": [
+                88
+            ],
+            "editor.defaultFormatter": "ms-python.black-formatter",
+            "editor.codeActionsOnSave": {
+                "source.organizeImports": "always"
+            }
+        },
+        "python.terminal.activateEnvironment": false,
+        "python.defaultInterpreterPath": "${workspaceFolder}\\.venv\\scripts\\python.exe",
+        "isort.args": [
+            "--profile",
+            "black"
+        ],
+        "black-formatter.interpreter": [
+            "${workspaceFolder}\\.venv\\scripts\\python.exe"
+        ],
+        "flake8.interpreter": [
+            "${workspaceFolder}\\.venv\\scripts\\python.exe"
+        ],
+        "isort.interpreter": [
+            "${workspaceFolder}\\.venv\\scripts\\python.exe"
+        ],
+        "pylint.interpreter": [
+            "${workspaceFolder}\\.venv\\scripts\\python.exe"
+        ],
+        "black-formatter.importStrategy": "fromEnvironment",
+        "isort.importStrategy": "fromEnvironment",
+        "flake8.importStrategy": "fromEnvironment",
+        "pylint.importStrategy": "fromEnvironment",
+        "black-formatter.args": [
+            "--line-length",
+            "88"
+        ],
+    },
+    "extensions": {
+        "recommendations": [
+            "esbenp.prettier-vscode",
+            "ms-python.black-formatter",
+            "ms-python.flake8",
+            "ms-python.isort",
+            "ms-python.pylint",
+            "ms-python.vscode-pylance"
+        ]
+    }
+}

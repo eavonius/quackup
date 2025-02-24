@@ -1,0 +1,6 @@
+[MASTER]
+# Disable all messages
+disable=all
+
+# Enable only documentation-related messages
+enable=C0114, C0115, C0116

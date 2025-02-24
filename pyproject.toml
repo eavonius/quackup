@@ -27,3 +27,20 @@ dependencies = [
 
 [project.scripts]
 quackup = 'quackup.cli:cli'
+
+[tool.setuptools.packages.find]
+include = ['quackup']
+exclude = [
+    '.venv',
+    'build',
+    'dist', 
+    'migrations', 
+    'node_modules', 
+    'tests', 
+    '.flake8', 
+    '.pylintrc',
+    '.releasrc.json', 
+    'package.json', 
+    'package-lock.json',
+    'quackup.code-workspace', 
+]

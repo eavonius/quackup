@@ -1,0 +1,26 @@
+{
+  "name": "quackup",
+  "version": "0.0.1",
+  "description": "Development dependencies for semantic versioning of quackup.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eavonius/quackup.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/eavonius/quackup/issues"
+  },
+  "homepage": "https://github.com/eavonius/quackup#readme",
+  "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/exec": "^7.0.3",
+    "@semantic-release/github": "^11.0.1",
+    "semantic-release": "^24.2.2"
+  },
+  "dependencies": {
+    "quackup": "file:"
+  }
+}
