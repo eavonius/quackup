@@ -59,7 +59,7 @@ jobs:
       - name: Update pyproject.toml with new version
         run: |
           echo "Setting version to ${{ steps.determine_version.outputs.version }} in pyproject.toml"
-          dasel put string -f pyproject.toml -p toml project.version ${{ steps.determine_version.outputs.version }}
+          dasel put -r toml -t string -f pyproject.toml -v '${{ steps.determine_version.outputs.version }}' project.version
 
       - name: Install python dependencies
         run: |
