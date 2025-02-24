@@ -116,7 +116,25 @@ migrations/
      └─ down.sql
 ```
 
-Place SQL statements you want to run during a migration in the `up.sql` file, and corresponding SQL statements you want to undo those changes in the `down.sql` file in the same folder.
+Place the SQL statements you want to run during a migration in the
+`up.sql` file, and corresponding SQL statements you want to undo those
+changes in the `down.sql` file in the same folder.
+
+#### Transaction support
+
+The generated up.sql and down.sql files are automatically wrapped in a duckdb
+transaction, ensuring atomicity:
+
+```sql
+BEGIN TRANSACTION;
+
+-- Your migration logic here
+-- Example: ALTER TABLE users ADD COLUMN age INTEGER;
+
+COMMIT;
+```
+
+This prevents partial application of migrations and helps maintain database integrity.
 
 ---
 
@@ -199,6 +217,36 @@ will automatically reflect that.
 ## Contributing
 
 Contributions are welcome! If you find bugs, have feature requests, or want to contribute, please [open an issue](https://github.com/eavonius/quackup/issues) or [submit a pull request](https://github.com/eavonius/quackup/pulls).
+
+### Testing contributions
+
+To run tests in your own fork:
+
+1. Create a virtual environment in the `.venv` directory.
+
+   ```sh
+   py -m pip install virtualenv
+   py -m virtualenv .venv
+   ```
+
+2. Enter the virtual environment.
+
+   Run the appropriate _activate_ script depending on your shell.
+
+   Examples:
+
+   - Bash:
+     ```bash
+     source ./.venv/scripts/activate.sh
+     ```
+   - Windows PowerShell:
+     ```powershell
+     .\.venv\Scripts\Activate
+     ```
+
+3. Install test dependencies with `pip install -e .[test]`
+
+4. Run tests with `pytest -v`
 
 ---
 

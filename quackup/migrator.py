@@ -6,10 +6,22 @@ from uuid import uuid4
 
 import duckdb
 
-from .config import get_db_path, get_migrations_dir
+from .config import CONFIG_FILENAME, get_db_path, get_migrations_dir
+from .migration_builder import build_down_migration, build_up_migration
 
-MIGRATIONS_PATH = get_migrations_dir()
-DB_PATH = get_db_path()
+
+def get_db_connection() -> duckdb.DuckDBPyConnection:
+    """
+    Retrieves a connection to the DuckDB database.
+
+    Returns
+    -------
+    duckdb.DuckDBPyConnection
+        A connection to the duckdb database to find migrations in.
+    """
+
+    db_path = get_db_path()
+    return duckdb.connect(db_path)
 
 
 def initialize_migrations_table(connection: duckdb.DuckDBPyConnection):
@@ -103,7 +115,19 @@ def run_migrations(
         The number of migrations to rollback if running "down". Defaults to 1.
     """
 
-    connection = duckdb.connect(DB_PATH)
+    migrations_dir = get_migrations_dir()
+
+    # Ensure the migrations directory exists
+    if not os.path.exists(migrations_dir):
+        raise FileNotFoundError(
+            f"Migrations directory '{migrations_dir}' does not exist."
+        )
+
+    # Ensure the config file exists
+    if not os.path.exists(CONFIG_FILENAME):
+        raise FileNotFoundError(f"Configuration file '{CONFIG_FILENAME}' is missing.")
+
+    connection = get_db_connection()
 
     try:
         initialize_migrations_table(connection)
@@ -111,12 +135,12 @@ def run_migrations(
         applied_migrations = get_applied_migrations(connection)
 
         # Sort migrations by applied timestamp, newest first
-        migration_folders = sorted(os.listdir(MIGRATIONS_PATH), reverse=True)
+        migration_folders = sorted(os.listdir(migrations_dir), reverse=True)
 
         migrations_to_process = []
 
         for folder_name in migration_folders:
-            if os.path.isdir(os.path.join(MIGRATIONS_PATH, folder_name)):
+            if os.path.isdir(os.path.join(migrations_dir, folder_name)):
                 status = applied_migrations.get(folder_name, "down")
 
                 if (direction == "up" and status == "down") or (
@@ -137,7 +161,7 @@ def run_migrations(
         for folder_name in migrations_to_process:
             sql_file = "up.sql" if direction == "up" else "down.sql"
 
-            file_path = os.path.join(MIGRATIONS_PATH, folder_name, sql_file)
+            file_path = os.path.join(migrations_dir, folder_name, sql_file)
 
             if os.path.exists(file_path):
                 with open(file_path, "r") as f:
@@ -169,6 +193,9 @@ def generate_migration(name: str):
         The base name of the migration. Will have spaces replaced with underscores
         and be prefixed with a timestamp and unique id to attempt to prevent duplicates.
     """
+    migrations_dir = get_migrations_dir()
+
+    os.makedirs(migrations_dir, exist_ok=True)
 
     sanitized_name = name.strip().replace(" ", "_").lower()
 
@@ -177,15 +204,15 @@ def generate_migration(name: str):
     unique_id = str(uuid4())[:8]  # Similar to Alembic revision IDs
 
     folder_name = f"{timestamp}-{unique_id}_{sanitized_name}"
-    folder_path = os.path.join(MIGRATIONS_PATH, folder_name)
+    folder_path = os.path.join(get_migrations_dir(), folder_name)
 
     os.makedirs(folder_path, exist_ok=True)
 
     with open(os.path.join(folder_path, "up.sql"), "w") as f:
-        f.write(f"-- Up migration: {name}\n-- Created on {datetime.now()}\n\n")
+        f.write(build_up_migration(name))
 
     with open(os.path.join(folder_path, "down.sql"), "w") as f:
-        f.write(f"-- Down migration: {name}\n-- Created on {datetime.now()}\n\n")
+        f.write(build_down_migration(name))
 
     print(f"Created new migration folder: {folder_path}")
 
@@ -193,7 +220,9 @@ def generate_migration(name: str):
 def status():
     """Shows the status of all migrations."""
 
-    connection = duckdb.connect(DB_PATH)
+    migrations_dir = get_migrations_dir()
+
+    connection = get_db_connection()
 
     try:
         initialize_migrations_table(connection)
@@ -204,8 +233,8 @@ def status():
 
         print("-" * 70)
 
-        for folder_name in sorted(os.listdir(MIGRATIONS_PATH)):
-            if os.path.isdir(os.path.join(MIGRATIONS_PATH, folder_name)):
+        for folder_name in sorted(os.listdir(migrations_dir)):
+            if os.path.isdir(os.path.join(migrations_dir, folder_name)):
                 status = applied_migrations.get(folder_name, "down")
                 print(f"{folder_name:<60} {status:<10}")
     finally:

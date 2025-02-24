@@ -81,6 +81,8 @@ def get_migrations_dir() -> str:
     str
         The relative directory to use for creating and running database migrations.
     """
+    if not os.path.exists(CONFIG_FILENAME):
+        raise FileNotFoundError(f"Configuration file '{CONFIG_FILENAME}' is missing.")
 
     config = configparser.ConfigParser()
     config.read(CONFIG_FILENAME)

@@ -2,4 +2,8 @@
 build/
 dist/
 node_modules/
+migrations/
+test_migrations/
+__pycache__
 *.egg-info/
+quackup.ini
