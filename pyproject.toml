@@ -1,0 +1,29 @@
+[build-system]
+requires = ['setuptools>=42', 'wheel']
+build-backend = 'setuptools.build_meta'
+
+[project]
+name = 'quackup'
+version = '0.1.0'
+description = 'A simple migration tool for DuckDB databases.'
+readme = 'README.md'
+license = { file = 'LICENSE' }
+authors = [
+    { name = 'Jayme Edwards', email = 'jayme.edwards@gmail.com' }
+]
+requires-python = '>=3.7'
+keywords = ['duckdb', 'migrations', 'database', 'schema']
+classifiers = [
+    'Programming Language :: Python :: 3',
+    'License :: OSI Approved :: MIT License',
+    'Operating System :: OS Independent',
+]
+dependencies = [
+    'click',
+    'configparser',
+    'dotenv',
+    'duckdb'
+]
+
+[project.scripts]
+quackup = 'quackup.cli:cli'
