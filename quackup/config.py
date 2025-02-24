@@ -5,27 +5,62 @@ import os
 
 from dotenv import load_dotenv
 
-DEFAULT_CONFIG = """
-[quackup]
-db_env_var = DUCKDB_PATH
-"""
+CONFIG_FILENAME = "quackup.ini"
+
+
+def get_default_config(migrations_dir: str = "migrations") -> configparser.ConfigParser:
+    """
+    Create and return the default configuration for the quackup.ini file.
+
+    Parameters
+    ----------
+    migrations_dir: str
+        The directory migrations should be created in. Defaults to "migrations".
+
+    Returns
+    -------
+    configparser.ConfigParser
+        A configuration parser object with quackup.ini configuration values.
+    """
+
+    config = configparser.ConfigParser()
+    config["quackup"] = {
+        "db_env_var": "DUCKDB_PATH",
+        "migrations_dir": migrations_dir,
+    }
+    return config
+
+
+def save_config(config: configparser.ConfigParser):
+    """
+    Save the configuration to the quackup.ini file.
+
+    Parameters
+    ----------
+    config: configparser.ConfigParser
+        A configuration parser object with quackup.ini configuration values.
+    """
+
+    with open(CONFIG_FILENAME, "w", encoding="utf8") as f:
+        config.write(f)
 
 
 def get_db_path() -> str:
-    """Retrieve the path to the duckdb database."""
+    """
+    Retrieve the path to the duckdb database.
 
-    # Load .env file if present
+    Returns
+    -------
+    str
+        The path to the duckdb database to migrate.
+    """
+
     load_dotenv()
 
-    # Load configuration from quackup.ini
-    CONFIG_FILE = "quackup.ini"
     config = configparser.ConfigParser()
-    config.read(CONFIG_FILE)
+    config.read(CONFIG_FILENAME)
 
-    # Get the environment variable name for the DuckDB file path
     db_env_var = config.get("quackup", "db_env_var", fallback="DUCKDB_PATH")
-
-    # Get the actual DuckDB file path from the environment
     db_path = os.getenv(db_env_var)
 
     if not db_path:
@@ -35,3 +70,18 @@ def get_db_path() -> str:
         )
 
     return db_path
+
+
+def get_migrations_dir() -> str:
+    """
+    Retrieve the configured migrations directory.
+
+    Returns
+    -------
+    str
+        The relative directory to use for creating and running database migrations.
+    """
+
+    config = configparser.ConfigParser()
+    config.read(CONFIG_FILENAME)
+    return config.get("quackup", "migrations_dir", fallback="migrations")
