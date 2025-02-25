@@ -21,6 +21,21 @@ def get_db_connection() -> duckdb.DuckDBPyConnection:
     """
 
     db_path = get_db_path()
+
+    if db_path == ":memory:":
+        print("Connecting to DuckDB in-memory database.")
+        return duckdb.connect(db_path)
+
+    # Resolve absolute vs relative path
+    if not os.path.isabs(db_path):
+        db_path = os.path.abspath(db_path)
+
+    # Ensure the directory exists (for file-based databases)
+    db_dir = os.path.dirname(db_path)
+    if db_dir:  # Avoid making directories if db_path is just a filename
+        os.makedirs(db_dir, exist_ok=True)
+
+    print(f"Connecting to DuckDB at file: {db_path}")
     return duckdb.connect(db_path)
 
 

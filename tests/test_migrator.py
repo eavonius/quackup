@@ -170,11 +170,3 @@ def test_missing_duckdb_path_env_var(monkeypatch):
         ValueError, match="Environment variable 'DUCKDB_PATH' is not set"
     ):
         run_migrations(dry_run=False, direction="up")
-
-
-def test_incorrect_duckdb_path_env_var(monkeypatch):
-    """Test behavior when the DUCKDB_PATH environment variable is incorrect."""
-    monkeypatch.setenv("DUCKDB_PATH", "invalid_path/invalid.duckdb")
-
-    with pytest.raises(Exception, match="Cannot open file"):
-        run_migrations(dry_run=False, direction="up")
